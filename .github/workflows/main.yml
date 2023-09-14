@@ -47,4 +47,4 @@ jobs:
           $env:targetFilePath = "encrypt-kvm-data/encrypt-kvmdata.json"
 
           # Run your script with Pester and pass the extracted values as arguments
-          Invoke-Pester ./encrypt-kvm-data.ps1 -Passthru -ArgumentList $name, $value
+          Invoke-Pester ./encrypt-kvm-data.ps1 -Passthru
