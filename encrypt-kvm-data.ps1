@@ -22,11 +22,8 @@ $AES.Mode = [System.Security.Cryptography.CipherMode]::CBC
 foreach ($field in $fieldsToEncrypt) {
     Write-Host "Entered into FOREACH...!"
 
-    # Check if the credentials array exists and has at least one item
-    if ($appdetailget.keyValueEntries.Count -gt 0) {
-
-        # Access the value of the current field
-        $plaintext = $appdetailget.keyValueEntries[0].$field
+    # Access the value of the current field
+        $plaintext = $field
 
         # Convert plaintext to bytes (UTF-8 encoding)
         $plaintextBytes = [System.Text.Encoding]::UTF8.GetBytes($plaintext)
@@ -41,15 +38,39 @@ foreach ($field in $fieldsToEncrypt) {
         $encryptedBase64 = [System.Convert]::ToBase64String($encryptedBytes)
 
         # Store the encrypted value back in the JSON data
-        $appdetailget.keyValueEntries[0].$field = @{
+        $field = @{
             "EncryptedValue" = $encryptedBase64
             "IV" = $IVBase64
         }
-    }
+
+    # # Check if the credentials array exists and has at least one item
+    # if ($appdetailget.keyValueEntries.Count -gt 0) {
+
+    #     # Access the value of the current field
+    #     $plaintext = $appdetailget.keyValueEntries[0].$field
+
+    #     # Convert plaintext to bytes (UTF-8 encoding)
+    #     $plaintextBytes = [System.Text.Encoding]::UTF8.GetBytes($plaintext)
+
+    #     # Generate a random initialization vector (IV)
+    #     $AES.GenerateIV()
+    #     $IVBase64 = [System.Convert]::ToBase64String($AES.IV)
+
+    #     # Encrypt the data
+    #     $encryptor = $AES.CreateEncryptor()
+    #     $encryptedBytes = $encryptor.TransformFinalBlock($plaintextBytes, 0, $plaintextBytes.Length)
+    #     $encryptedBase64 = [System.Convert]::ToBase64String($encryptedBytes)
+
+    #     # Store the encrypted value back in the JSON data
+    #     $appdetailget.keyValueEntries[0].$field = @{
+    #         "EncryptedValue" = $encryptedBase64
+    #         "IV" = $IVBase64
+    #     }
+    # }
 }
 
 # Convert the modified JSON data back to JSON format with a higher depth value
-$encryptedJsonData = $appdetailget | ConvertTo-Json -Depth 10
+$encryptedJsonData = $field | ConvertTo-Json -Depth 10
 
 # Display the modified JSON data
 Write-Host $encryptedJsonData
