@@ -1,11 +1,13 @@
 # Load the environment variables
 $git_token = $env:token
 $fileContent = $env:jsonContent
-# $fileContent = Get-Content -Raw -Path json_data.json
-Write-Host "fileContent: $fileContent"
+
+$filerawcontent = $fileContent -Raw
+# $filerawcontent = Get-Content -Raw -Path json_data.json
+Write-Host "fileContent: $filerawcontent"
 
 # Convert the JSON content from base64 to a JSON object
-$jsonObject = $fileContent | ConvertFrom-Json
+$jsonObject = $filerawcontent | ConvertFrom-Json
 
 # Specify the fields you want to encrypt
 $fieldsToEncrypt = $env:fieldsToEncrypt -split ","
