@@ -7,6 +7,17 @@ on:
 env:
   DEPLOYMENT_NAME: Encrypt KVM Json Payload
   key: ${{ secrets.key }}
+  JSON_DATA: |
+    {
+    "keyValueEntries": [
+      {
+        "name": "example_key",
+        "value": "example_value"
+      }
+    ],
+    "nextPageToken": ""
+    }
+    
 
 jobs:
   apigee-window-artifacts:
@@ -34,15 +45,7 @@ jobs:
           # Read the JSON data from the file
           # $jsonContent = Get-Content -Raw -Path json_data.json | ConvertFrom-Json
 
-          $env:jsonContent = {
-                            "keyValueEntries": [
-                              {
-                                "name": "example_key",
-                                "value": "example_value"
-                              }
-                            ],
-                            "nextPageToken": ""
-                          }
+          $env:jsonContent = $env:JSON_DATA
 
           # Extract the "name" and "value" fields
           $name = $jsonContent.keyValueEntries[0].name
