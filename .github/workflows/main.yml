@@ -9,15 +9,15 @@ env:
   key: ${{ secrets.key }}
   FIELDS_TO_ENCRYPT: "name,value"
   JSON_DATA: |
+  {
+  "keyValueEntries": [
     {
-      "keyValueEntries": [
-        {
-          "name": "example_key",
-          "value": "example_value"
-        }
-      ],
-      "nextPageToken": ""
+      "name": "example_key",
+      "value": "example_value"
     }
+  ],
+  "nextPageToken": ""
+}
 
 jobs:
   apigee-window-artifacts:
