@@ -3,73 +3,63 @@ $git_token = $env:token
 $fileContent = $env:jsonContent
 Write-Host "fileContent: $fileContent"
 
-# Read the JSON data from the file
-$jsonFilePath = "json_data.json"
-$appdetailget = Get-Content -Raw -Path $jsonFilePath
-Write-Host "appdetailget: $appdetailget"
+# Convert the JSON content from base64 to a JSON object
+$jsonObject = $fileContent | ConvertFrom-Json
 
-# Convert JSON data to a PowerShell object
-$jsonObject = $appdetailget | ConvertFrom-Json
+# Specify the fields you want to encrypt
+$fieldsToEncrypt = $env:fieldsToEncrypt -split ","
+Write-Host "fieldsToEncrypt: $fieldsToEncrypt"
 
-# Check if the "keyValueEntries" property exists and has items
-if ($jsonObject.keyValueEntries.Count -gt 0) {
-    Write-Host "Entered into if loop..."
+# Encryption key
+$keyHex = $env:key  # Replace with your encryption key
 
-    # Specify the fields you want to encrypt
-    $fieldsToEncrypt = $env:fieldsToEncrypt -split ","
+# Create a new AES object with the specified key and AES mode
+$AES = New-Object System.Security.Cryptography.AesCryptoServiceProvider
+$AES.KeySize = 256  # Set the key size to 256 bits for AES-256
+$AES.Key = [System.Text.Encoding]::UTF8.GetBytes($keyHex.PadRight(32))
+$AES.Mode = [System.Security.Cryptography.CipherMode]::CBC
 
-    Write-Host "fieldsToEncrypt: $fieldsToEncrypt"
+# Loop through the specified fields and encrypt their values
+foreach ($field in $fieldsToEncrypt) {
+    Write-Host "Entered into FOREACH...!"
 
-    # Encryption key
-    $keyHex = $env:key  # Replace with your encryption key
+    # Find the item with the matching field name
+    $item = $jsonObject.keyValueEntries | Where-Object { $_.name -eq $field }
 
-    # Create a new AES object with the specified key and AES mode
-    $AES = New-Object System.Security.Cryptography.AesCryptoServiceProvider
-    $AES.KeySize = 256  # Set the key size to 256 bits for AES-256
-    $AES.Key = [System.Text.Encoding]::UTF8.GetBytes($keyHex.PadRight(32))
-    $AES.Mode = [System.Security.Cryptography.CipherMode]::CBC
+    # Check if an item with the matching field name was found
+    if ($item -ne $null) {
+        $plaintext = $item.value
+        Write-Host "plaintext: $plaintext"
 
-    # Loop through the specified fields and encrypt their values
-    foreach ($field in $fieldsToEncrypt) {
-        Write-Host "Entered into FOREACH...!"
-        # Check if the credentials array exists and has at least one item
-        if ($jsonObject.keyValueEntries -is [array] -and $jsonObject.keyValueEntries.Count -gt 0) {
-            Write-Host "Entered into inner IF...!"
+        # Convert plaintext to bytes (UTF-8 encoding)
+        $plaintextBytes = [System.Text.Encoding]::UTF8.GetBytes($plaintext)
 
-            # Access the value of the current field
-            $plaintext = $jsonObject.keyValueEntries[0].$field
+        # Generate a random initialization vector (IV)
+        $AES.GenerateIV()
+        $IVBase64 = [System.Convert]::ToBase64String($AES.IV)
 
-            Write-Host "plaintext: $plaintext"
+        # Encrypt the data
+        $encryptor = $AES.CreateEncryptor()
+        $encryptedBytes = $encryptor.TransformFinalBlock($plaintextBytes, 0, $plaintextBytes.Length)
+        $encryptedBase64 = [System.Convert]::ToBase64String($encryptedBytes)
 
-            # Convert plaintext to bytes (UTF-8 encoding)
-            $plaintextBytes = [System.Text.Encoding]::UTF8.GetBytes($plaintext)
-
-            # Generate a random initialization vector (IV)
-            $AES.GenerateIV()
-            $IVBase64 = [System.Convert]::ToBase64String($AES.IV)
-
-            # Encrypt the data
-            $encryptor = $AES.CreateEncryptor()
-            $encryptedBytes = $encryptor.TransformFinalBlock($plaintextBytes, 0, $plaintextBytes.Length)
-            $encryptedBase64 = [System.Convert]::ToBase64String($encryptedBytes)
-
-            # Store the encrypted value back in the JSON data
-            $jsonObject.keyValueEntries[0].$field = @{
-                "EncryptedValue" = $encryptedBase64
-                "IV" = $IVBase64
-            }
+        # Update the item with encrypted values
+        $item.value = @{
+            "EncryptedValue" = $encryptedBase64
+            "IV" = $IVBase64
         }
     }
-
-    # Convert the modified JSON data back to JSON format with a higher depth value
-    $encryptedJsonData = $jsonObject | ConvertTo-Json -Depth 10
-
-    # Display the modified JSON data
-    Write-Host "encryptedJsonData: $encryptedJsonData"
+    else {
+        Write-Host "Item with field name '$field' not found."
+    }
 }
-else {
-    Write-Host "No 'keyValueEntries' found or count is zero."
-}
+
+# Convert the modified JSON data back to JSON format with a higher depth value
+$encryptedJsonData = $jsonObject | ConvertTo-Json -Depth 10
+
+# Display the modified JSON data
+Write-Host "encryptedJsonData: $encryptedJsonData"
+
 
 
 
