@@ -48,10 +48,11 @@ jobs:
           $env:jsonContent = $env:JSON_DATA
 
           # Extract the "name" and "value" fields
-          $name = $jsonContent.keyValueEntries[0].name
-          $value = $jsonContent.keyValueEntries[0].value
+          # $name = $jsonContent.keyValueEntries[0].name
+          # $value = $jsonContent.keyValueEntries[0].value
+          # $env:fieldsToEncrypt = "$name,$value"
 
-          $env:fieldsToEncrypt = "$name,$value"
+          $env:fieldsToEncrypt = "name,value"
 
           # Define your GitHub username, repository names, branch names, and file paths
           $env:targetgithubUsername = "pavansirasanambedu"
