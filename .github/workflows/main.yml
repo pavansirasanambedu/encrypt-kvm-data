@@ -9,7 +9,6 @@ env:
   key: ${{ secrets.key }}
   JSON_DATA: |
     {
-      "appId": "37577536-9ab3-4378-945f-e72fe1c6b257",
       "keyValueEntries": [
         {
           "name": "example_key",
