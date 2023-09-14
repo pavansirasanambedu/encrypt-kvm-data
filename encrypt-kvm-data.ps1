@@ -3,8 +3,11 @@ $git_token = $env:token
 $fileContent = Get-Content -Raw -Path json_data.json
 Write-Host "fileContent: $fileContent"
 
-# Load the JSON data
-$appdetailget = ConvertFrom-Json $fileContent
+# # Load the JSON data
+# $appdetailget = ConvertFrom-Json $fileContent
+# Write-Host "appdetailget: $appdetailget"
+
+$appdetailget = $fileContent
 Write-Host "appdetailget: $appdetailget"
 
 # Specify the fields you want to encrypt
