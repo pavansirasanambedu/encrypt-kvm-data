@@ -45,7 +45,7 @@ jobs:
           # Read the JSON data from the file
           # $jsonContent = Get-Content -Raw -Path json_data.json | ConvertFrom-Json
 
-          $env:jsonContent = $env:JSON_DATA
+          $env:jsonContent = "$env:JSON_DATA"
 
           # Extract the "name" and "value" fields
           # $name = $jsonContent.keyValueEntries[0].name
