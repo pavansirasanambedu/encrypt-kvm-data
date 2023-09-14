@@ -33,6 +33,8 @@ foreach ($field in $fieldsToEncrypt) {
         # Access the value of the current field
         $plaintext = $appdetailget.keyValueEntries[0].$field
 
+        Write-Host "plaintext: $plaintext"
+
         # Convert plaintext to bytes (UTF-8 encoding)
         $plaintextBytes = [System.Text.Encoding]::UTF8.GetBytes($plaintext)
 
