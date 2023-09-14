@@ -1,11 +1,11 @@
 # Load the environment variables
 $git_token = $env:token
-
-$fileContent = Get-Content -Raw -Path json_data.json
+$fileContent = $env:jsonContent
 Write-Host "fileContent: $fileContent"
 
-# Convert the JSON content from base64 to a JSON object
-$jsonObject = $fileContent | ConvertFrom-Json
+# Load the JSON data
+$appdetailget = ConvertFrom-Json $fileContent
+Write-Host "appdetailget: $appdetailget"
 
 # Specify the fields you want to encrypt
 $fieldsToEncrypt = $env:fieldsToEncrypt -split ","
@@ -23,13 +23,13 @@ $AES.Mode = [System.Security.Cryptography.CipherMode]::CBC
 # Loop through the specified fields and encrypt their values
 foreach ($field in $fieldsToEncrypt) {
     Write-Host "Entered into FOREACH...!"
+    # Check if the credentials array exists and has at least one item
+    if ($appdetailget.keyValueEntries.Count -gt 0) {
+        Write-Host "Entered into if...!"
 
-    # Find the item with the matching field name
-    $item = $jsonObject.keyValueEntries | Where-Object { $_.name -eq $field }
+        # Access the value of the current field
+        $plaintext = $appdetailget.keyValueEntries[0].$field
 
-    # Check if an item with the matching field name was found
-    if ($item -ne $null) {
-        $plaintext = $item.value
         Write-Host "plaintext: $plaintext"
 
         # Convert plaintext to bytes (UTF-8 encoding)
@@ -44,22 +44,26 @@ foreach ($field in $fieldsToEncrypt) {
         $encryptedBytes = $encryptor.TransformFinalBlock($plaintextBytes, 0, $plaintextBytes.Length)
         $encryptedBase64 = [System.Convert]::ToBase64String($encryptedBytes)
 
-        # Update the item with encrypted values
-        $item.value = @{
+        # Store the encrypted value back in the JSON data
+        $appdetailget.keyValueEntries[0].$field = @{
             "EncryptedValue" = $encryptedBase64
             "IV" = $IVBase64
         }
     }
-    else {
-        Write-Host "Item with field name '$field' not found."
-    }
 }
 
 # Convert the modified JSON data back to JSON format with a higher depth value
-$encryptedJsonData = $jsonObject | ConvertTo-Json -Depth 10
+$encryptedJsonData = $appdetailget | ConvertTo-Json -Depth 10
 
 # Display the modified JSON data
 Write-Host "encryptedJsonData: $encryptedJsonData"
+
+# Define the local file path and file name
+$filePath = $env:sourcepath
+
+# Write the JSON data to the file
+$encryptedJsonData | Set-Content -Path $filePath -Encoding UTF8
+
 
 
 
