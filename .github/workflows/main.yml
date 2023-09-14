@@ -38,10 +38,9 @@ jobs:
       - name: Encrypt KVM Json Payload
         shell: pwsh
         run: |
-          $env:ORG = "${{ secrets.APIGEE_ORG }}"
           $env:token = "${{ secrets.GIT_TOKEN }}"
           $env:key = "${{ secrets.key }}"
-          $env:JSON_DATA = "${{ env.JSON_DATA }}"  # Pass the JSON data as an environment variable
+          # $env:JSON_DATA = "${{ env.JSON_DATA }}"  # Pass the JSON data as an environment variable
 
           # Parse the JSON data into a PowerShell object
           $jsonObject = $env:JSON_DATA | ConvertFrom-Json
