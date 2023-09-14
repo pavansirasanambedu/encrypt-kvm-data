@@ -25,9 +25,10 @@ $AES.Mode = [System.Security.Cryptography.CipherMode]::CBC
 
 # Loop through the specified fields and encrypt their values
 foreach ($field in $fieldsToEncrypt) {
-
+    Write-Host "Entered into FOREACH...!"
     # Check if the credentials array exists and has at least one item
     if ($appdetailget.keyValueEntries.Count -gt 0) {
+        Write-Host "Entered into if...!"
 
         # Access the value of the current field
         $plaintext = $appdetailget.keyValueEntries[0].$field
@@ -56,7 +57,7 @@ foreach ($field in $fieldsToEncrypt) {
 $encryptedJsonData = $appdetailget | ConvertTo-Json -Depth 10
 
 # Display the modified JSON data
-Write-Host $encryptedJsonData
+Write-Host "encryptedJsonData: $encryptedJsonData"
 
 
 
