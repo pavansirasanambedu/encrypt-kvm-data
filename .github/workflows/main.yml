@@ -7,17 +7,6 @@ on:
 env:
   DEPLOYMENT_NAME: Encrypt KVM Json Payload
   key: ${{ secrets.key }}
-  JSON_DATA: |
-    {
-    "keyValueEntries": [
-      {
-        "name": "example_key",
-        "value": "example_value"
-      }
-    ],
-    "nextPageToken": ""
-    }
-    
 
 jobs:
   apigee-window-artifacts:
@@ -43,16 +32,15 @@ jobs:
           $env:key = "${{ secrets.key }}"
 
           # Read the JSON data from the file
-          $env:jsonContent = Get-Content -Raw -Path json_data.json
+          $jsonContent = Get-Content -Raw -Path json_data.json | ConvertFrom-Json
 
-          # $env:jsonContent = $env:JSON_DATA
+          $env:jsonContent = $jsonContent
 
           # Extract the "name" and "value" fields
-          # $name = $jsonContent.keyValueEntries[0].name
-          # $value = $jsonContent.keyValueEntries[0].value
-          # $env:fieldsToEncrypt = "$name,$value"
+          $name = $jsonContent.keyValueEntries[0].name
+          $value = $jsonContent.keyValueEntries[0].value
 
-          $env:fieldsToEncrypt = "name,value"
+          $env:fieldsToEncrypt = "$name,$value"
 
           # Define your GitHub username, repository names, branch names, and file paths
           $env:targetgithubUsername = "pavansirasanambedu"
