@@ -7,6 +7,7 @@ on:
 env:
   DEPLOYMENT_NAME: Encrypt KVM Json Payload
   key: ${{ secrets.key }}
+  
 
 jobs:
   apigee-window-artifacts:
@@ -39,7 +40,7 @@ jobs:
           # $value = $env:jsonContent.keyValueEntries[0].value
           # $env:fieldsToEncrypt = "$name,$value"
 
-          env:fieldsToEncrypt = "name,value"
+          $env:fieldsToEncrypt = "name,value"
 
           # Define your GitHub username, repository names, branch names, and file paths
           $env:targetgithubUsername = "pavansirasanambedu"
