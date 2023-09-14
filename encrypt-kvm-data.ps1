@@ -2,7 +2,7 @@
 $git_token = $env:token
 $fileContent = $env:jsonContent
 
-$filerawcontent = $fileContent -Raw
+$filerawcontent = Get-Content -Raw -Path $fileContent
 # $filerawcontent = Get-Content -Raw -Path json_data.json
 Write-Host "fileContent: $filerawcontent"
 
