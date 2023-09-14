@@ -7,17 +7,6 @@ on:
 env:
   DEPLOYMENT_NAME: Encrypt KVM Json Payload
   key: ${{ secrets.key }}
-  FIELDS_TO_ENCRYPT: "name,value"
-  JSON_DATA: |
-  {
-  "keyValueEntries": [
-    {
-      "name": "example_key",
-      "value": "example_value"
-    }
-  ],
-  "nextPageToken": ""
-}
 
 jobs:
   apigee-window-artifacts:
@@ -42,25 +31,20 @@ jobs:
           $env:token = "${{ secrets.GIT_TOKEN }}"
           $env:key = "${{ secrets.key }}"
 
-          $env:fieldsToEncrypt = $env:FIELDS_TO_ENCRYPT
-          $env:jsonInput = $env:JSON_DATA
-          
-          # $env:JSON_DATA = "${{ env.JSON_DATA }}"  # Pass the JSON data as an environment variable
+          # Read the JSON data from the file
+          $jsonContent = Get-Content -Raw -Path json_data.json | ConvertFrom-Json
 
-          # Parse the JSON data into a PowerShell object
-          # $jsonObject = $env:JSON_DATA | ConvertFrom-Json
+          # Extract the "name" and "value" fields
+          $name = $jsonContent.keyValueEntries[0].name
+          $value = $jsonContent.keyValueEntries[0].value
 
-          # # Extract the "name" and "value" fields
-          # $name = $jsonObject.keyValueEntries[0].name
-          # $value = $jsonObject.keyValueEntries[0].value
-
-          # $env:fieldsToEncrypt = "$name,$value"
+          $env:fieldsToEncrypt = "$name,$value"
 
           # Define your GitHub username, repository names, branch names, and file paths
           $env:targetgithubUsername = "pavansirasanambedu"
           $env:repositoryName = "common-encrypt-decrypt"
           $env:targetBranchName = "encrypt/kvmjsonpayload"
           $env:targetFilePath = "encrypt-kvm-data/encrypt-kvmdata.json"
-          
+
           # Run your script with Pester and pass the extracted values as arguments
-          Invoke-Pester ./encrypt-kvm-data.ps1 -Passthru
+          Invoke-Pester ./encrypt-kvm-data.ps1 -Passthru -ArgumentList $name, $value
