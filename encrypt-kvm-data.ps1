@@ -6,8 +6,6 @@ Write-Host "fileContent: $fileContent"
 # Convert the JSON content from base64 to a JSON object
 $jsonObject = $fileContent | ConvertFrom-Json
 
-# $jsonObject = $env:jsonContent
-
 # Specify the fields you want to encrypt
 $fieldsToEncrypt = $env:fieldsToEncrypt -split ","
 Write-Host "fieldsToEncrypt: $fieldsToEncrypt"
