@@ -1,6 +1,6 @@
 # Load the environment variables
 $git_token = $env:token
-$fileContent = Get-Content -Raw -Path json_data.json
+$fileContent = $env:jsonContent
 Write-Host "fileContent: $fileContent"
 
 # Convert the JSON content from base64 to a JSON object
@@ -22,6 +22,7 @@ $AES.Mode = [System.Security.Cryptography.CipherMode]::CBC
 # Loop through the specified fields and encrypt their values
 foreach ($field in $fieldsToEncrypt) {
     Write-Host "Entered into FOREACH...!"
+    Write-Host "Field: $field"
 
     # Find the item with the matching field name
     $item = $jsonObject.keyValueEntries | Where-Object { $_.name -eq $field }
