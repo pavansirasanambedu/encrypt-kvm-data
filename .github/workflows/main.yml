@@ -32,9 +32,7 @@ jobs:
           $env:key = "${{ secrets.key }}"
 
           # Read the JSON data from the file
-          $jsonContent = Get-Content -Raw -Path json_data.json | ConvertFrom-Json
-
-          $env:jsonContent = $jsonContent
+          $env:jsonContent = Get-Content -Raw -Path json_data.json | ConvertFrom-Json
 
           # Extract the "name" and "value" fields
           $name = $jsonContent.keyValueEntries[0].name
