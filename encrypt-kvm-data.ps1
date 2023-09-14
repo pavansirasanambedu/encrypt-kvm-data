@@ -33,7 +33,7 @@ if ($jsonObject.keyValueEntries.Count -gt 0) {
     foreach ($field in $fieldsToEncrypt) {
         Write-Host "Entered into FOREACH...!"
         # Check if the credentials array exists and has at least one item
-        if ($jsonObject.keyValueEntries[0].$field) {
+        if ($jsonObject.keyValueEntries -is [array] -and $jsonObject.keyValueEntries.Count -gt 0) {
             Write-Host "Entered into inner IF...!"
 
             # Access the value of the current field
