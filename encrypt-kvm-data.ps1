@@ -1,11 +1,13 @@
 # Load the environment variables
 $git_token = $env:token
-$fileContent = $env:jsonInput
+$fileContent = $env:jsonContent
 
 Write-Host "fileContent: $fileContent"
 
 # Specify the fields you want to encrypt
 $fieldsToEncrypt = $env:fieldsToEncrypt -split ","
+
+Write-Host "fieldsToEncrypt: $fieldsToEncrypt"
 
 # Encryption key
 $keyHex = $env:key  # Replace with your encryption key
@@ -18,6 +20,7 @@ $AES.Mode = [System.Security.Cryptography.CipherMode]::CBC
 
 # Loop through the specified fields and encrypt their values
 foreach ($field in $fieldsToEncrypt) {
+    Write-Host "Entered into FOREACH...!"
 
     # Check if the credentials array exists and has at least one item
     if ($appdetailget.keyValueEntries.Count -gt 0) {
