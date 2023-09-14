@@ -1,6 +1,6 @@
 # Load the environment variables
 $git_token = $env:token
-$fileContent = $env:jsonContent
+$fileContent = Get-Content -Raw -Path json_data.json
 Write-Host "fileContent: $fileContent"
 
 # Load the JSON data
